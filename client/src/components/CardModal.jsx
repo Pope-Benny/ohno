@@ -142,7 +142,7 @@ export default function CardModal({ card, onClose, onChange }) {
             )}
 
             <textarea
-              className="input mt-5 min-h-[180px] resize-y text-sm leading-relaxed"
+              className="input mt-5 min-h-[180px] resize-y text-sm leading-relaxed pointer-coarse:text-base"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Description — what needs to happen, gotchas, links…"

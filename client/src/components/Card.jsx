@@ -43,7 +43,7 @@ export default function Card({ card, onOpen }) {
       }}
       {...attributes}
       {...listeners}
-      className="touch-none"
+      className="touch-manipulation"
     >
       <CardShell card={card} onClick={() => onOpen(card)} />
     </div>

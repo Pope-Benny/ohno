@@ -89,9 +89,11 @@ body {
     background 0.12s ease;
   user-select: none;
 }
-.btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 var(--c-shadow);
+@media (hover: hover) {
+  .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 var(--c-shadow);
+  }
 }
 .btn:active {
   transform: translate(1px, 1px);
@@ -103,18 +105,22 @@ body {
   color: oklch(0.15 0.02 95);
 }
 
-.btn-danger:hover {
-  background: var(--c-danger);
-  color: oklch(0.97 0.01 30);
-  border-color: var(--c-danger);
+@media (hover: hover) {
+  .btn-danger:hover {
+    background: var(--c-danger);
+    color: oklch(0.97 0.01 30);
+    border-color: var(--c-danger);
+  }
 }
 
 .btn-ghost {
   box-shadow: none;
   background: transparent;
 }
-.btn-ghost:hover {
-  box-shadow: 3px 3px 0 var(--c-shadow);
+@media (hover: hover) {
+  .btn-ghost:hover {
+    box-shadow: 3px 3px 0 var(--c-shadow);
+  }
 }
 
 .hard {
@@ -144,15 +150,38 @@ body {
 .underline-hot {
   border-bottom: 3px solid transparent;
 }
-.underline-hot:hover {
-  border-bottom-color: var(--c-acid);
+@media (hover: hover) {
+  .underline-hot:hover {
+    border-bottom-color: var(--c-acid);
+  }
 }
 
 .scroll-x {
   scrollbar-width: thin;
   scrollbar-color: var(--c-dim) transparent;
+  overscroll-behavior-x: contain;
 }
 .scroll-y {
   scrollbar-width: thin;
   scrollbar-color: var(--c-dim) transparent;
+  overscroll-behavior-y: contain;
+}
+
+/* Board-tab row scrolls horizontally; hide the bar so pills sit flush. */
+.no-bar {
+  scrollbar-width: none;
+}
+.no-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch ergonomics: fatter hit areas on coarse pointers only. */
+@media (pointer: coarse) {
+  .tap,
+  .btn {
+    min-height: 40px;
+  }
+  .tap {
+    min-width: 40px;
+  }
 }

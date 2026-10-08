@@ -2,7 +2,8 @@ import { useRef, useState } from 'react';
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCorners,
   closestCenter,
   pointerWithin,
@@ -39,7 +40,10 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
   const dragJustEnded = useRef(false);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
+    // Mouse: drag after a small movement, click still opens the card.
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    // Touch: swipes scroll the board/columns; a long press picks up a card.
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
   );
 
   const patchBoard = (fn) =>
@@ -248,12 +252,12 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
             ))}
           </SortableContext>
 
-          <div className="w-[300px] shrink-0">
+          <div className="w-[300px] max-w-[calc(100vw-5rem)] shrink-0">
             {addingColumn ? (
               <form onSubmit={addColumn} className="border-2 border-line bg-panel p-2.5">
                 <input
                   autoFocus
-                  className="input text-sm font-bold"
+                  className="input text-sm font-bold pointer-coarse:text-base"
                   placeholder="Column name"
                   value={colDraft}
                   onChange={(e) => setColDraft(e.target.value)}

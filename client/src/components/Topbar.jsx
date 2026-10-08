@@ -35,7 +35,7 @@ export default function Topbar({
 
   return (
     <header className="sticky top-0 z-40 border-b-4 border-line bg-paper/95 backdrop-blur-[2px]">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3 sm:px-6">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 sm:gap-x-5 sm:gap-y-3 sm:px-6 sm:py-3">
         <div className="flex items-center gap-2.5">
           <span className="flex h-9 w-9 items-center justify-center border-2 border-line bg-acid font-mono text-xs font-bold text-black shadow-[3px_3px_0_var(--c-shadow)]">
             大野
@@ -45,12 +45,12 @@ export default function Topbar({
           </span>
         </div>
 
-        <nav className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+        <nav className="no-bar order-last flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto sm:order-none sm:w-auto sm:flex-1 sm:flex-wrap sm:overflow-x-visible">
           {boards.map((b) => (
             <button
               key={b.id}
               onClick={() => onSelect(b.id)}
-              className={`border-2 border-line px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider transition-all ${
+              className={`tap shrink-0 border-2 border-line px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider transition-all ${
                 b.id === activeId
                   ? 'bg-acid text-black shadow-[3px_3px_0_var(--c-shadow)]'
                   : 'bg-panel text-dim hover:text-ink hover:shadow-[3px_3px_0_var(--c-shadow)]'
@@ -61,10 +61,10 @@ export default function Topbar({
           ))}
 
           {adding ? (
-            <form onSubmit={submit} className="w-44">
+            <form onSubmit={submit} className="w-44 shrink-0">
               <input
                 autoFocus
-                className="input py-1.5 text-[11px]"
+                className="input py-1.5 text-[11px] pointer-coarse:text-base"
                 placeholder="Board name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -75,7 +75,7 @@ export default function Topbar({
           ) : (
             <button
               onClick={() => setAdding(true)}
-              className="border-2 border-dashed border-line/50 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-dim transition-colors hover:border-acid hover:text-acid"
+              className="tap shrink-0 border-2 border-dashed border-line/50 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-dim transition-colors hover:border-acid hover:text-acid"
               title="New board"
             >
               + Board
@@ -83,52 +83,54 @@ export default function Topbar({
           )}
         </nav>
 
-        {activeId && (
-          <div className="relative shrink-0" ref={accentRef}>
-            <button
-              className="btn btn-ghost shrink-0"
-              onClick={() => setAccentOpen((o) => !o)}
-              title="Board accent color"
-              aria-label="Board accent color"
-            >
-              <span
-                className="mr-2 inline-block h-3 w-3 border border-line align-middle"
-                style={{ backgroundColor: accentValue(accent) }}
-              />
-              Accent
-            </button>
-            {accentOpen && (
-              <div className="absolute right-0 z-50 mt-2 grid w-max grid-cols-4 gap-2 border-2 border-line bg-panel p-3 shadow-[4px_4px_0_var(--c-shadow)]">
-                {Object.entries(ACCENTS).map(([key, a]) => (
-                  <button
-                    key={key}
-                    className={`h-6 w-6 border-2 transition-transform hover:scale-110 ${
-                      accent === key
-                        ? 'border-ink shadow-[2px_2px_0_var(--c-shadow)]'
-                        : 'border-line/60'
-                    }`}
-                    style={{ backgroundColor: a.value }}
-                    onClick={() => {
-                      onAccentChange(key);
-                      setAccentOpen(false);
-                    }}
-                    title={a.label}
-                    aria-label={a.label}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-4">
+          {activeId && (
+            <div className="relative" ref={accentRef}>
+              <button
+                className="btn btn-ghost shrink-0"
+                onClick={() => setAccentOpen((o) => !o)}
+                title="Board accent color"
+                aria-label="Board accent color"
+              >
+                <span
+                  className="mr-2 inline-block h-3 w-3 border border-line align-middle"
+                  style={{ backgroundColor: accentValue(accent) }}
+                />
+                Accent
+              </button>
+              {accentOpen && (
+                <div className="absolute right-0 z-50 mt-2 grid w-max grid-cols-4 gap-2 border-2 border-line bg-panel p-3 shadow-[4px_4px_0_var(--c-shadow)]">
+                  {Object.entries(ACCENTS).map(([key, a]) => (
+                    <button
+                      key={key}
+                      className={`tap h-6 w-6 border-2 transition-transform hover:scale-110 ${
+                        accent === key
+                          ? 'border-ink shadow-[2px_2px_0_var(--c-shadow)]'
+                          : 'border-line/60'
+                      }`}
+                      style={{ backgroundColor: a.value }}
+                      onClick={() => {
+                        onAccentChange(key);
+                        setAccentOpen(false);
+                      }}
+                      title={a.label}
+                      aria-label={a.label}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
-        <button
-          className="btn btn-ghost shrink-0"
-          onClick={onToggleTheme}
-          title="Toggle theme"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? '☾ Dark' : '☀ Light'}
-        </button>
+          <button
+            className="btn btn-ghost shrink-0"
+            onClick={onToggleTheme}
+            title="Toggle theme"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? '☾ Dark' : '☀ Light'}
+          </button>
+        </div>
       </div>
     </header>
   );

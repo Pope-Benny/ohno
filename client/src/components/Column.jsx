@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import Card from './Card.jsx';
-import useConfirm from './useConfirm.jsx';
-
 export default function Column({
   column,
   onAddCard,
@@ -11,7 +9,6 @@ export default function Column({
   onDeleteColumn,
   onOpenCard,
 }) {
-  const [ask, confirmDialog] = useConfirm();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(column.name);
   const [draft, setDraft] = useState('');
@@ -41,14 +38,8 @@ export default function Column({
     setDraft('');
   };
 
-  const handleDelete = async () => {
-    const n = column.cards.length;
-    const ok = await ask(
-      n > 0
-        ? `Delete "${column.name}" and its ${n} card${n === 1 ? '' : 's'}?`
-        : `Delete column "${column.name}"?`
-    );
-    if (ok) onDeleteColumn();
+  const handleDelete = () => {
+    onDeleteColumn();
   };
 
   return (
@@ -59,7 +50,7 @@ export default function Column({
         transition,
         opacity: isDragging ? 0.4 : 1,
       }}
-      className={`flex w-[300px] shrink-0 flex-col border-2 bg-panel ${
+      className={`flex w-[300px] max-w-[calc(100vw-5rem)] shrink-0 flex-col border-2 bg-panel ${
         isOver && !isDragging ? 'border-acid shadow-[6px_6px_0_var(--c-shadow)]' : 'border-line'
       }`}
     >
@@ -67,7 +58,7 @@ export default function Column({
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab touch-none font-mono text-xs text-dim hover:text-acid active:cursor-grabbing"
+          className="tap cursor-grab touch-manipulation font-mono text-xs text-dim hover:text-acid active:cursor-grabbing"
           title="Drag column"
           aria-label="Drag column"
         >
@@ -77,7 +68,7 @@ export default function Column({
         {editing ? (
           <input
             autoFocus
-            className="input min-w-0 flex-1 py-0.5 text-sm font-bold"
+            className="input min-w-0 flex-1 py-0.5 text-sm font-bold pointer-coarse:text-base"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onBlur={submitName}
@@ -104,7 +95,7 @@ export default function Column({
         )}
 
         <button
-          className="px-1 font-mono text-xs font-bold text-dim hover:text-danger"
+          className="tap px-1 font-mono text-xs font-bold text-dim hover:text-danger"
           onClick={handleDelete}
           title="Delete column"
           aria-label="Delete column"
@@ -113,7 +104,7 @@ export default function Column({
         </button>
       </div>
 
-      <div className="scroll-y flex max-h-[calc(100vh-320px)] min-h-24 flex-1 flex-col gap-2.5 overflow-y-auto p-2.5">
+      <div className="scroll-y flex max-h-[calc(100dvh-320px)] min-h-24 flex-1 flex-col gap-2.5 overflow-y-auto p-2.5">
         <SortableContext
           items={column.cards.map((c) => `card:${c.id}`)}
           strategy={verticalListSortingStrategy}
@@ -132,7 +123,7 @@ export default function Column({
 
       <form onSubmit={submitCard} className="border-t-2 border-line p-2.5">
         <input
-          className="input py-1.5 text-[11px]"
+          className="input py-1.5 text-[11px] pointer-coarse:text-base"
           placeholder="+ Add card"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -143,7 +134,6 @@ export default function Column({
         />
       </form>
 
-      {confirmDialog}
     </div>
   );
 }
