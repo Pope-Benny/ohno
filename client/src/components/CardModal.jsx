@@ -150,15 +150,12 @@ export default function CardModal({ card, onClose, onChange }) {
           </div>
 
           <div className="flex items-center justify-between border-t-2 border-line px-5 py-3">
-            <span className="font-mono text-[10px] text-dim">
-              Autosaves as you type
-            </span>
+            <button className="btn btn-danger" onClick={handleDelete}>
+              Delete card
+            </button>
             <div className="flex gap-3">
               <button className="btn" onClick={close}>
                 Close
-              </button>
-              <button className="btn btn-danger" onClick={handleDelete}>
-                Delete card
               </button>
             </div>
           </div>

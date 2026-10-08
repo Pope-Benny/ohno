@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from './api.js';
 import { getTheme, toggleTheme } from './theme.js';
+import { accentValue } from './accent.js';
 import Topbar from './components/Topbar.jsx';
 import BoardView from './components/BoardView.jsx';
 import CardModal from './components/CardModal.jsx';
@@ -40,6 +41,17 @@ export default function App() {
     if (activeBoard) localStorage.setItem('ohno-board', String(activeBoard.id));
   }, [activeBoard]);
 
+  useEffect(() => {
+    const accent = accentValue(activeBoard?.accent);
+    const el = document.documentElement.style;
+    el.setProperty('--c-acid', accent);
+    if (theme === 'dark') {
+      el.setProperty('--c-shadow', accent);
+    } else {
+      el.removeProperty('--c-shadow');
+    }
+  }, [activeBoard?.accent, theme]);
+
   const openCard =
     activeBoard && openCardId != null
       ? activeBoard.columns.flatMap((c) => c.cards).find((c) => c.id === openCardId)
@@ -57,6 +69,20 @@ export default function App() {
 
   const toggle = () => setTheme(toggleTheme());
 
+  const setAccent = async (key) => {
+    if (!activeBoard) return;
+    setBoards((prev) =>
+      prev.map((b) => (b.id === activeBoard.id ? { ...b, accent: key } : b))
+    );
+    try {
+      await api.updateBoard(activeBoard.id, { accent: key });
+      await refresh();
+    } catch (e) {
+      setError(e.message);
+      await refresh();
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Topbar
@@ -66,6 +92,8 @@ export default function App() {
         onAddBoard={addBoard}
         theme={theme}
         onToggleTheme={toggle}
+        accent={activeBoard?.accent}
+        onAccentChange={setAccent}
       />
 
       {error && (

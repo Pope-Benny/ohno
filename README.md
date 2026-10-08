@@ -51,6 +51,7 @@ section in `docker-compose.yml` (e.g. `8080:3000` to expose directly).
 - Drag cards within and across columns; drag columns by their `::` handle
 - Card detail modal with autosave (debounced)
 - Confirm dialog on every delete
+- Per-board accent colors (light- and dark-mode safe) pickable next to the theme toggle
 - Dark theme by default, light via the toggle (persisted)
 
 ## API
@@ -59,7 +60,7 @@ section in `docker-compose.yml` (e.g. `8080:3000` to expose directly).
 | --- | --- | --- | --- |
 | GET | `/api/boards` | | Nested boards → columns → cards |
 | POST | `/api/boards` | `{name}` | |
-| PATCH | `/api/boards/:id` | `{name}` | |
+| PATCH | `/api/boards/:id` | `{name?, accent?}` | `accent`: `lime`/`yellow`/`orange`/`red`/`pink`/`purple`/`blue`/`teal` |
 | DELETE | `/api/boards/:id` | | Cascades columns + cards |
 | POST | `/api/boards/:id/columns` | `{name}` | |
 | PATCH | `/api/boards/:id/columns/order` | `{columnIds: []}` | Full ordered list |

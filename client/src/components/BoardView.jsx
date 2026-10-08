@@ -55,8 +55,6 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
     }
   };
 
-  const totalCards = board.columns.reduce((n, c) => n + c.cards.length, 0);
-
   // ---- dnd ----
 
   const findCardContext = (cardId) => {
@@ -179,7 +177,7 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
       setBoardName(board.name);
       return;
     }
-    commit(() => api.updateBoard(board.id, v));
+    commit(() => api.updateBoard(board.id, { name: v }));
   };
 
   const openCard = (card) => {
@@ -219,10 +217,6 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
               {board.name}
             </h1>
           )}
-          <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-dim">
-            {board.columns.length} column{board.columns.length === 1 ? '' : 's'} ·{' '}
-            {totalCards} card{totalCards === 1 ? '' : 's'}
-          </p>
         </div>
 
         <button className="btn btn-danger" onClick={deleteBoard}>

@@ -7,6 +7,17 @@ const fail = (res, msg, code = 400) => res.status(code).json({ error: msg });
 
 const cleanName = (v) => (typeof v === 'string' ? v.trim() : '');
 
+const ACCENT_KEYS = new Set([
+  'lime',
+  'yellow',
+  'orange',
+  'red',
+  'pink',
+  'purple',
+  'blue',
+  'teal',
+]);
+
 const nextPosition = (table, where, id) => {
   const row = db
     .prepare(`SELECT COALESCE(MAX(position) + 1, 0) AS p FROM ${table} WHERE ${where} = ?`)
@@ -43,9 +54,23 @@ router.patch('/boards/:id', (req, res) => {
   const board = db.prepare('SELECT * FROM boards WHERE id = ?').get(req.params.id);
   if (!board) return fail(res, 'Board not found', 404);
   const name = cleanName(req.body?.name);
-  if (!name) return fail(res, 'Board name is required');
-  db.prepare('UPDATE boards SET name = ? WHERE id = ?').run(name, board.id);
-  res.json({ ...board, name });
+  const accent = req.body?.accent;
+  const sets = [];
+  const vals = [];
+  if (name) {
+    sets.push('name = ?');
+    vals.push(name);
+  }
+  if (accent !== undefined) {
+    if (typeof accent !== 'string' || !ACCENT_KEYS.has(accent)) {
+      return fail(res, 'Invalid accent color');
+    }
+    sets.push('accent = ?');
+    vals.push(accent);
+  }
+  if (!sets.length) return fail(res, 'Nothing to update');
+  db.prepare(`UPDATE boards SET ${sets.join(', ')} WHERE id = ?`).run(...vals, board.id);
+  res.json(db.prepare('SELECT * FROM boards WHERE id = ?').get(board.id));
 });
 
 router.delete('/boards/:id', (req, res) => {

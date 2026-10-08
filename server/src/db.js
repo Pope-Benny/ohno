@@ -13,6 +13,7 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS boards (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
+  accent TEXT NOT NULL DEFAULT 'lime',
   position INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -33,6 +34,11 @@ CREATE TABLE IF NOT EXISTS cards (
 CREATE INDEX IF NOT EXISTS idx_columns_board ON columns(board_id);
 CREATE INDEX IF NOT EXISTS idx_cards_column ON cards(column_id);
 `);
+
+const boardCols = db.prepare('PRAGMA table_info(boards)').all().map((c) => c.name);
+if (!boardCols.includes('accent')) {
+  db.exec("ALTER TABLE boards ADD COLUMN accent TEXT NOT NULL DEFAULT 'lime'");
+}
 
 const hasBoards = db.prepare('SELECT COUNT(*) AS n FROM boards').get().n > 0;
 if (!hasBoards) {

@@ -103,10 +103,6 @@ export default function Column({
           </button>
         )}
 
-        <span className="border-2 border-line px-1.5 py-px font-mono text-[10px] font-bold">
-          {column.cards.length}
-        </span>
-
         <button
           className="px-1 font-mono text-xs font-bold text-dim hover:text-danger"
           onClick={handleDelete}

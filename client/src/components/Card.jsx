@@ -18,7 +18,7 @@ export function CardShell({ card, dragging = false, onClick }) {
         </h4>
       </div>
       {card.description ? (
-        <p className="mt-1.5 line-clamp-2 pl-7 font-mono text-[10px] leading-relaxed text-dim">
+        <p className="mt-1.5 pl-7 font-mono text-[10px] leading-relaxed text-dim break-words">
           {card.description}
         </p>
       ) : null}

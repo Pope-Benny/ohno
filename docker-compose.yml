@@ -5,7 +5,7 @@ services:
     container_name: ohno
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3456:3000"
+      - "192.168.4.80:5001:3000"
     volumes:
       - ohno-data:/data
     environment:

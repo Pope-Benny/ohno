@@ -20,7 +20,7 @@ async function req(path, { method = 'GET', body } = {}) {
 export const api = {
   boards: () => req('/api/boards'),
   createBoard: (name) => req('/api/boards', { method: 'POST', body: { name } }),
-  updateBoard: (id, name) => req(`/api/boards/${id}`, { method: 'PATCH', body: { name } }),
+  updateBoard: (id, data) => req(`/api/boards/${id}`, { method: 'PATCH', body: data }),
   deleteBoard: (id) => req(`/api/boards/${id}`, { method: 'DELETE' }),
 
   createColumn: (boardId, name) =>

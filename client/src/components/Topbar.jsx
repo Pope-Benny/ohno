@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ACCENTS, accentValue } from '../accent.js';
 
 export default function Topbar({
   boards,
@@ -7,9 +8,21 @@ export default function Topbar({
   onAddBoard,
   theme,
   onToggleTheme,
+  accent,
+  onAccentChange,
 }) {
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState('');
+  const [accentOpen, setAccentOpen] = useState(false);
+  const accentRef = useRef(null);
+
+  useEffect(() => {
+    const onDown = (e) => {
+      if (accentRef.current && !accentRef.current.contains(e.target)) setAccentOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, []);
 
   const submit = (e) => {
     e.preventDefault();
@@ -24,13 +37,12 @@ export default function Topbar({
     <header className="sticky top-0 z-40 border-b-4 border-line bg-paper/95 backdrop-blur-[2px]">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center border-2 border-line bg-acid font-display text-lg text-black shadow-[3px_3px_0_var(--c-shadow)]">
-            O
+          <span className="flex h-9 w-9 items-center justify-center border-2 border-line bg-acid font-mono text-xs font-bold text-black shadow-[3px_3px_0_var(--c-shadow)]">
+            大野
           </span>
           <span className="font-display text-xl uppercase tracking-tight sm:text-2xl">
             Ohno
           </span>
-          <span className="mt-0.5 font-mono text-sm text-dim">大野</span>
         </div>
 
         <nav className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
@@ -70,6 +82,44 @@ export default function Topbar({
             </button>
           )}
         </nav>
+
+        {activeId && (
+          <div className="relative shrink-0" ref={accentRef}>
+            <button
+              className="btn btn-ghost shrink-0"
+              onClick={() => setAccentOpen((o) => !o)}
+              title="Board accent color"
+              aria-label="Board accent color"
+            >
+              <span
+                className="mr-2 inline-block h-3 w-3 border border-line align-middle"
+                style={{ backgroundColor: accentValue(accent) }}
+              />
+              Accent
+            </button>
+            {accentOpen && (
+              <div className="absolute right-0 z-50 mt-2 grid w-max grid-cols-4 gap-2 border-2 border-line bg-panel p-3 shadow-[4px_4px_0_var(--c-shadow)]">
+                {Object.entries(ACCENTS).map(([key, a]) => (
+                  <button
+                    key={key}
+                    className={`h-6 w-6 border-2 transition-transform hover:scale-110 ${
+                      accent === key
+                        ? 'border-ink shadow-[2px_2px_0_var(--c-shadow)]'
+                        : 'border-line/60'
+                    }`}
+                    style={{ backgroundColor: a.value }}
+                    onClick={() => {
+                      onAccentChange(key);
+                      setAccentOpen(false);
+                    }}
+                    title={a.label}
+                    aria-label={a.label}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           className="btn btn-ghost shrink-0"
