@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" class="dark-root">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Ohno — 大野</title>
+    <script>
+      (function () {
+        var t = localStorage.getItem('ohno-theme') || 'dark';
+        document.documentElement.classList.toggle('light', t === 'light');
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

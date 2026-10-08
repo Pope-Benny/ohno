@@ -1,0 +1,27 @@
+services:
+  ohno:
+    build: .
+    image: ohno:latest
+    container_name: ohno
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3456:3000"
+    volumes:
+      - ohno-data:/data
+    environment:
+      DB_PATH: /data/ohno.db
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  ohno-data:
