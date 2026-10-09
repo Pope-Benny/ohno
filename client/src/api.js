@@ -36,4 +36,8 @@ export const api = {
   deleteCard: (id) => req(`/api/cards/${id}`, { method: 'DELETE' }),
   moveCard: (id, toColumnId, index) =>
     req(`/api/cards/${id}/move`, { method: 'PATCH', body: { toColumnId, index } }),
+
+  whiteboard: (boardId) => req(`/api/boards/${boardId}/whiteboard`),
+  saveWhiteboard: (boardId, data) =>
+    req(`/api/boards/${boardId}/whiteboard`, { method: 'PUT', body: { data } }),
 };

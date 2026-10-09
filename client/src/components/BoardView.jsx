@@ -14,6 +14,7 @@ import { SortableContext, arrayMove, horizontalListSortingStrategy } from '@dnd-
 import { api } from '../api.js';
 import Column from './Column.jsx';
 import { CardShell } from './Card.jsx';
+import Whiteboard from './Whiteboard.jsx';
 import useConfirm from './useConfirm.jsx';
 
 function detectCollisions(args) {
@@ -37,6 +38,9 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
   const [colDraft, setColDraft] = useState('');
   const [editingName, setEditingName] = useState(false);
   const [boardName, setBoardName] = useState(board.name);
+  const [view, setView] = useState(
+    () => localStorage.getItem(`ohno-wb-${board.id}`) === '1' ? 'whiteboard' : 'board'
+  );
   const dragJustEnded = useRef(false);
 
   const sensors = useSensors(
@@ -228,6 +232,33 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
         </button>
       </div>
 
+      <div className="mb-6 flex items-center gap-1 overflow-x-auto no-bar">
+        {(
+          [
+            ['board', 'Kanban'],
+            ['whiteboard', 'Whiteboard'],
+          ]
+        ).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => {
+              setView(key);
+              localStorage.setItem(`ohno-wb-${board.id}`, key === 'whiteboard' ? '1' : '0');
+            }}
+            className={`shrink-0 border-2 border-line px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-wider transition-all ${
+              view === key
+                ? 'bg-acid text-black shadow-[3px_3px_0_var(--c-shadow)]'
+                : 'bg-panel text-dim hover:text-ink'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {view === 'whiteboard' ? (
+        <Whiteboard boardId={board.id} accent={board.accent} setError={setError} />
+      ) : (
       <DndContext
         sensors={sensors}
         collisionDetection={detectCollisions}
@@ -280,6 +311,7 @@ export default function BoardView({ board, setBoards, refresh, setError, onOpenC
           {activeCard ? <CardShell card={activeCard} dragging /> : null}
         </DragOverlay>
       </DndContext>
+      )}
 
       {confirmDialog}
     </div>

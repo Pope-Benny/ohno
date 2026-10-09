@@ -163,6 +163,54 @@ router.delete('/cards/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+// ---- whiteboards ----
+
+router.get('/boards/:id/whiteboard', (req, res) => {
+  const board = db.prepare('SELECT * FROM boards WHERE id = ?').get(req.params.id);
+  if (!board) return fail(res, 'Board not found', 404);
+  let data = {};
+  const row = db.prepare('SELECT data FROM whiteboards WHERE board_id = ?').get(board.id);
+  if (row) {
+    try {
+      data = JSON.parse(row.data);
+    } catch {
+      data = {};
+    }
+  }
+  res.json({ data });
+});
+
+const sanitizeWhiteboard = (v) => {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+  const out = {};
+  for (const key of ['strokes', 'notes', 'shapes']) {
+    const arr = v[key];
+    if (arr === undefined) {
+      out[key] = [];
+      continue;
+    }
+    if (!Array.isArray(arr)) return null;
+    out[key] = arr.filter(
+      (item) => item && typeof item === 'object' && typeof item.id !== 'undefined'
+    );
+  }
+  return out;
+};
+
+router.put('/boards/:id/whiteboard', (req, res) => {
+  const board = db.prepare('SELECT * FROM boards WHERE id = ?').get(req.params.id);
+  if (!board) return fail(res, 'Board not found', 404);
+  const data = sanitizeWhiteboard(req.body?.data);
+  if (!data) return fail(res, 'Invalid whiteboard data');
+  const json = JSON.stringify(data);
+  db.prepare(
+    `INSERT INTO whiteboards (board_id, data, updated_at)
+     VALUES (?, ?, datetime('now'))
+     ON CONFLICT(board_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
+  ).run(board.id, json);
+  res.json({ data });
+});
+
 router.patch('/cards/:id/move', (req, res) => {
   const card = db.prepare('SELECT * FROM cards WHERE id = ?').get(req.params.id);
   if (!card) return fail(res, 'Card not found', 404);

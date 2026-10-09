@@ -31,6 +31,11 @@ CREATE TABLE IF NOT EXISTS cards (
   position INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS whiteboards (
+  board_id INTEGER PRIMARY KEY REFERENCES boards(id) ON DELETE CASCADE,
+  data TEXT NOT NULL DEFAULT '{}',
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 CREATE INDEX IF NOT EXISTS idx_columns_board ON columns(board_id);
 CREATE INDEX IF NOT EXISTS idx_cards_column ON cards(column_id);
 `);

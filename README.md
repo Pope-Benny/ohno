@@ -52,6 +52,9 @@ section in `docker-compose.yml` (e.g. `8080:3000` to expose directly).
 - Card detail modal with autosave (debounced)
 - Confirm dialog on every delete
 - Per-board accent colors (light- and dark-mode safe) pickable next to the theme toggle
+- Each board has a **Whiteboard** view (toggle in the board header): a pan/zoom
+  canvas with sticky notes, freehand pen, arrow/line/rect shapes, whole-object
+  eraser, and undo/redo (`Ctrl+Z`)
 - Dark theme by default, light via the toggle (persisted)
 
 ## API
@@ -70,6 +73,8 @@ section in `docker-compose.yml` (e.g. `8080:3000` to expose directly).
 | PATCH | `/api/cards/:id` | `{title?, description?}` | |
 | DELETE | `/api/cards/:id` | | |
 | PATCH | `/api/cards/:id/move` | `{toColumnId, index}` | Insert at `index` of target column |
+| GET | `/api/boards/:id/whiteboard` | | `{data}` canvas JSON (strokes/notes/shapes) |
+| PUT | `/api/boards/:id/whiteboard` | `{data}` | Replaces the board's canvas JSON |
 | GET | `/api/health` | | Healthcheck |
 
 ## Local dev

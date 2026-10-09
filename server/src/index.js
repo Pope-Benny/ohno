@@ -6,7 +6,7 @@ import api from './api.js';
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
 
-app.use(express.json({ limit: '256kb' }));
+app.use(express.json({ limit: '2mb' }));
 
 app.get('/api/health', (req, res) => res.json({ ok: true, app: 'ohno' }));
 app.use('/api', api);
